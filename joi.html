@@ -186,7 +186,8 @@
             try {
                 const res = await fetch(`${IMAGE_SERVICE}/api/random-image`);
                 const data = await res.json();
-                const url = data.url.startsWith('http') ? data.url : IMAGE_SERVICE + data.url;
+                let url = data.url.startsWith('http') ? data.url : IMAGE_SERVICE + data.url;
+                url = url.replace('http://', 'https://');
                 const container = document.getElementById(containerId);
                 const img = document.createElement('img');
                 img.src = url;
